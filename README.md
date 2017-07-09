@@ -8,11 +8,13 @@ like `bankai`.
 
 ## Usage
 ```js
-var sw = require('choo-service-worker')
 var choo = require('choo')
 
 var app = choo()
-app.use(sw('/sw.js'))
+if (process.env.NODE_ENV !== 'production') {
+  app.use(require('choo-service-worker/clear')())
+}
+app.use(require('choo-service-worker')())
 app.mount('body')
 ```
 
@@ -28,6 +30,9 @@ Emitted when the worker correctly registers.
 Register a new service worker if possible. Route defaults to `/sw.js`. If
 provided, `opts` is passed directly to the worker register code. Emits events
 when the worker is registered.
+
+### `clear = sw/clear()`
+Clear all service workers.
 
 ## License
 [MIT](https://tldrlegal.com/license/mit-license)
