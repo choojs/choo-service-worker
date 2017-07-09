@@ -2,7 +2,7 @@
   "name": "choo-service-worker",
   "description": "Service worker plugin for choo",
   "repository": "yoshuawuyts/choo-service-worker",
-  "version": "2.1.3",
+  "version": "2.1.4",
   "scripts": {
     "deps": "dependency-check . && dependency-check . --extra --no-dev",
     "start": "node .",
