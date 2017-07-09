@@ -4,7 +4,7 @@ var assert = require('assert')
 module.exports = serviceWorker
 
 var events = serviceWorker.events = {
-  INSTALL: 'sw:install',
+  INSTALLED: 'sw:installed',
   ERROR: 'log:error'
 }
 

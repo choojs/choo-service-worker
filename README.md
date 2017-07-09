@@ -20,7 +20,7 @@ app.mount('body')
 ### `log:error` | `sw.events.ERROR`
 Emitted if the worker fails to register.
 
-### `sw:install` | `sw.events.INSTALL`
+### `sw:installed` | `sw.events.INSTALLED`
 Emitted when the worker correctly registers.
 
 ## API
