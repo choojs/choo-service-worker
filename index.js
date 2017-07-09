@@ -24,7 +24,7 @@ function serviceWorker (name, opts) {
       if (navigator.serviceWorker) {
         navigator.serviceWorker.register(name, opts)
           .then(function (registration) {
-            emitter.emit(events.INSTALL, registration)
+            emitter.emit(events.INSTALLED, registration)
           }).catch(function (err) {
             emitter.emit(events.ERROR, err)
           })
