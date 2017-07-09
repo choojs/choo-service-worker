@@ -1,0 +1,25 @@
+{
+  "name": "choo-service-worker",
+  "description": "Service worker plugin for choo",
+  "repository": "yoshuawuyts/choo-service-worker",
+  "version": "1.0.0",
+  "scripts": {
+    "deps": "dependency-check . && dependency-check . --extra --no-dev",
+    "start": "node .",
+    "test": "standard && npm run deps"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "dependency-check": "^2.8.0",
+    "standard": "^10.0.2",
+    "tape": "^4.6.3"
+  },
+  "keywords": [
+    "choo",
+    "service",
+    "worker",
+    "service-worker",
+    "sw"
+  ],
+  "license": "MIT"
+}
