@@ -21,7 +21,7 @@ function serviceWorker (name, opts) {
 
     emitter.on(state.events.DOMCONTENTLOADED, function () {
       opts = mutate({ scope: '/' }, opts)
-      if (navigator.serviceWorker) {
+      if (navigator.serviceWorker && navigator.onLine) {
         navigator.serviceWorker.register(name, opts)
           .then(function (registration) {
             emitter.emit(events.INSTALLED, registration)
