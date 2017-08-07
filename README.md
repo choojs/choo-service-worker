@@ -23,7 +23,13 @@ app.mount('body')
 Emitted if the worker fails to register.
 
 ### `sw:installed` | `sw.events.INSTALLED`
-Emitted when the worker correctly registers.
+Emitted when the worker correctly registers for the first time.
+
+### `sw:updated` | `sw.events.UPDATED`
+Emitted when an already saved worker register or update its content.
+
+### `sw:redundant` | `sw.events.REDUNDANT`
+Emitted when an existing worker become redundant.
 
 ## API
 ### `plugin = sw([route], [opts])`
