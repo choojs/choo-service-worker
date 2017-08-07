@@ -5,6 +5,8 @@ module.exports = serviceWorker
 
 var events = serviceWorker.events = {
   INSTALLED: 'sw:installed',
+  UPDATED: 'sw:updated',
+  REDUNDANT: 'sw:redundant',
   ERROR: 'log:error'
 }
 
@@ -24,7 +26,23 @@ function serviceWorker (name, opts) {
       if (navigator.serviceWorker && navigator.onLine) {
         navigator.serviceWorker.register(name, opts)
           .then(function (registration) {
-            emitter.emit(events.INSTALLED, registration)
+            registration.onupdatefound = function () {
+              var installingWorker = registration.installing
+              installingWorker.onstatechange = function () {
+                switch (installingWorker.state) {
+                  case 'installed':
+                    if (navigator.serviceWorker.controller) {
+                      emitter.emit(events.UPDATED, registration)
+                    } else {
+                      emitter.emit(events.INSTALLED, registration)
+                    }
+                    break
+                  case 'redundant':
+                    emitter.emit(events.REDUNDANT, registration)
+                    break
+                }
+              }
+            }
           }).catch(function (err) {
             emitter.emit(events.ERROR, err)
           })
