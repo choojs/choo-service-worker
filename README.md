@@ -9,12 +9,14 @@ like `bankai`.
 ## Usage
 ```js
 var choo = require('choo')
+var sw = require('choo-service-worker')
+var clear = require('choo-service-worker/clear')
 
 var app = choo()
 if (process.env.NODE_ENV !== 'production') {
-  app.use(require('choo-service-worker/clear')())
+  app.use(clear())
 }
-app.use(require('choo-service-worker')())
+app.use(sw())
 app.mount('body')
 ```
 
@@ -31,11 +33,41 @@ Emitted when an already saved worker register or update its content.
 ### `sw:redundant` | `sw.events.REDUNDANT`
 Emitted when an existing worker become redundant.
 
+### `sw:enablePreload` | `sw.events.ENABLE_PRELOAD`
+Emit this event to enable navigationPreload.
+
+### `sw:disablePreload` | `sw.events.DISABLE_PRELOAD`
+Emit this event to disable navigationPreload.
+
+### `sw:postMessage` | `sw.events.POST_MESSAGE`
+Emit this to post a message to the current service worker. This event is not 
+meant to be handled by choo (or any client).
+
+### `sw:message` | `sw.events.MESSAGE`
+Listen to this event to hadle messages from the worker. This event is not meant 
+to be sent by choo (or any client).
+
+### `sw:sync` | `sw.events.SYNC`
+Emit this to register a sync tag to the service worker. This event is not 
+meant to be handled by choo (or any client).
+
+### `sw:notificationRequest` | `sw.events.NOTIFICATION_REQUEST`
+Emit this to ask for authorization to send notifications. This event is not 
+meant to be handled by choo (or any client).
+
 ## API
 ### `plugin = sw([route], [opts])`
 Register a new service worker if possible. Route defaults to `/sw.js`. If
 provided, `opts` is passed directly to the worker register code. Emits events
 when the worker is registered.
+The plugin also add a few properties to the app state.
+
+- `state.navigationPreloadSupported`: `bool` - Indicate if navigationPreload is 
+supported.
+- `state.navigationPreloadState`: `object` - An object with boolean properties 
+`enabled` and `disabled` indicating the current state of navigation preload.
+- `state.syncTags`: `array` - an array of registered tags for background 
+syncronization.
 
 ### `clear = sw/clear()`
 Clear all service workers.
