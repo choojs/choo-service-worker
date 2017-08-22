@@ -12,6 +12,7 @@ var events = serviceWorker.events = {
   POST_MESSAGE: 'sw:postMessage',
   MESSAGE: 'sw:message',
   SYNC: 'sw:sync',
+  NOTIFICATION_REQUEST: 'sw:notificationRequest',
   ERROR: 'log:error'
 }
 
@@ -40,6 +41,11 @@ function serviceWorker (name, opts) {
           emitter.emit(events.MESSAGE, { data: event.data, channel: 'messageChannel', port: 'port2' })
         }
       }
+      emitter.on(events.NOTIFICATION_REQUEST, function (cb) {
+        Notification.requestPermission(function(result) {
+          cb(result)
+        })
+      })
       if (navigator.serviceWorker && navigator.onLine) {
         navigator.serviceWorker.onmessage = function (event) {
           emitter.emit(events.MESSAGE, { data: event.data, channel: 'navigator.serviceWorker', port: null })
