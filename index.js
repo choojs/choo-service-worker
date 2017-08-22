@@ -9,6 +9,8 @@ var events = serviceWorker.events = {
   REDUNDANT: 'sw:redundant',
   ENABLE_PRELOAD: 'sw:enablePreload',
   DISABLE_PRELOAD: 'sw:disablePreload',
+  POST_MESSAGE: 'sw:postMessage',
+  MESSAGE: 'sw:message',
   ERROR: 'log:error'
 }
 
@@ -25,6 +27,21 @@ function serviceWorker (name, opts) {
 
     emitter.on(state.events.DOMCONTENTLOADED, function () {
       opts = mutate({ scope: '/' }, opts)
+      window.onmessage = function (event) {
+        emitter.emit(events.MESSAGE, { data: event.data, channel: 'window', port: null })
+      }
+      navigator.serviceWorker.onmessage = function (event) {
+        emitter.emit(events.MESSAGE, { data: event.data, channel: 'navigator.serviceWorker', port: null })
+      }
+      if (window.MessageChannel) {
+        var messageChannel = new MessageChannel()
+        messageChannel.port1.onmessage = function(event) {
+          emitter.emit(events.MESSAGE, { data: event.data, channel: 'messageChannel', port: 'port1' })
+        }
+        messageChannel.port2.onmessage = function(event) {
+          emitter.emit(events.MESSAGE, { data: event.data, channel: 'messageChannel', port: 'port2' })
+        }
+      }
       if (navigator.serviceWorker && navigator.onLine) {
         navigator.serviceWorker.register(name, opts)
           .then(function (registration) {
@@ -59,6 +76,9 @@ function serviceWorker (name, opts) {
                 return
               }
               worker.addEventListener('statechange', resolve, { once: true })
+              emitter.on(events.POST_MESSAGE, function (message) {
+                worker.postMessage(message)
+              })
             }).then(function () {
               state.navigationPreloadSupported = !!registration.navigationPreload
               registration.navigationPreload.getState().then(function (_state) {
