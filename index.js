@@ -7,6 +7,8 @@ var events = serviceWorker.events = {
   INSTALLED: 'sw:installed',
   UPDATED: 'sw:updated',
   REDUNDANT: 'sw:redundant',
+  ENABLE_PRELOAD: 'sw:enablePreload',
+  DISABLE_PRELOAD: 'sw:disablePreload',
   ERROR: 'log:error'
 }
 
@@ -43,6 +45,32 @@ function serviceWorker (name, opts) {
                 }
               }
             }
+          }).catch(function (err) {
+            emitter.emit(events.ERROR, err)
+          })
+
+        // sw ready
+        navigator.serviceWorker.ready
+          .then(function (registration) {
+            new Promise(function (resolve) {
+              var worker = registration.active
+              if (worker.state === 'activated') {
+                resolve()
+                return
+              }
+              worker.addEventListener('statechange', resolve, { once: true })
+            }).then(function () {
+              state.navigationPreloadSupported = !!registration.navigationPreload
+              registration.navigationPreload.getState().then(function (_state) {
+                state.navigationPreloadState = _state
+              })
+              emitter.on(events.ENABLE_PRELOAD, function () {
+                registration.navigationPreload.enable()
+              })
+              emitter.on(events.DISABLE_PRELOAD, function () {
+                registration.navigationPreload.disable()
+              })
+            })
           }).catch(function (err) {
             emitter.emit(events.ERROR, err)
           })
