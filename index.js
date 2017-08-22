@@ -11,6 +11,7 @@ var events = serviceWorker.events = {
   DISABLE_PRELOAD: 'sw:disablePreload',
   POST_MESSAGE: 'sw:postMessage',
   MESSAGE: 'sw:message',
+  SYNC: 'sw:sync',
   ERROR: 'log:error'
 }
 
@@ -30,9 +31,6 @@ function serviceWorker (name, opts) {
       window.onmessage = function (event) {
         emitter.emit(events.MESSAGE, { data: event.data, channel: 'window', port: null })
       }
-      navigator.serviceWorker.onmessage = function (event) {
-        emitter.emit(events.MESSAGE, { data: event.data, channel: 'navigator.serviceWorker', port: null })
-      }
       if (window.MessageChannel) {
         var messageChannel = new MessageChannel()
         messageChannel.port1.onmessage = function(event) {
@@ -43,6 +41,9 @@ function serviceWorker (name, opts) {
         }
       }
       if (navigator.serviceWorker && navigator.onLine) {
+        navigator.serviceWorker.onmessage = function (event) {
+          emitter.emit(events.MESSAGE, { data: event.data, channel: 'navigator.serviceWorker', port: null })
+        }
         navigator.serviceWorker.register(name, opts)
           .then(function (registration) {
             registration.onupdatefound = function () {
@@ -62,6 +63,9 @@ function serviceWorker (name, opts) {
                 }
               }
             }
+            return registration.sync.getTags()
+          }).then(function (tags) {
+            state.syncTags = tags
           }).catch(function (err) {
             emitter.emit(events.ERROR, err)
           })
@@ -89,6 +93,11 @@ function serviceWorker (name, opts) {
               })
               emitter.on(events.DISABLE_PRELOAD, function () {
                 registration.navigationPreload.disable()
+              })
+            })
+            emitter.on(events.SYNC, function (tag) {
+              registration.sync.register(tag).catch(function (err) {
+                emitter.emit(events.ERROR, err)
               })
             })
           }).catch(function (err) {
