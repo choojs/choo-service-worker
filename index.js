@@ -43,7 +43,7 @@ function serviceWorker (name, opts) {
       }
       emitter.on(events.NOTIFICATION_REQUEST, function (cb) {
         Notification.requestPermission(function(result) {
-          cb(result)
+          if (typeof result === 'function') cb(result)
         })
       })
       if (navigator.serviceWorker && navigator.onLine) {
