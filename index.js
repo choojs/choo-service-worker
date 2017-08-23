@@ -96,13 +96,23 @@ function serviceWorker (name, opts) {
               })
               emitter.on(events.ENABLE_PRELOAD, function () {
                 registration.navigationPreload.enable()
+                registration.navigationPreload.getState().then(function (_state) {
+                  state.navigationPreloadState = _state
+                })
               })
               emitter.on(events.DISABLE_PRELOAD, function () {
                 registration.navigationPreload.disable()
+                registration.navigationPreload.getState().then(function (_state) {
+                  state.navigationPreloadState = _state
+                })
               })
             })
             emitter.on(events.SYNC, function (tag) {
-              registration.sync.register(tag).catch(function (err) {
+              registration.sync.register(tag).then(function () {
+                return registration.sync.getTags()
+              }).then(function (tags) {
+                state.syncTags = tags
+              }).catch(function (err) {
                 emitter.emit(events.ERROR, err)
               })
             })
