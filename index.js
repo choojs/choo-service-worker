@@ -1,3 +1,4 @@
+/* global MessageChannel Notification */
 var mutate = require('xtend/mutable')
 var assert = require('assert')
 
@@ -34,15 +35,15 @@ function serviceWorker (name, opts) {
       }
       if (window.MessageChannel) {
         var messageChannel = new MessageChannel()
-        messageChannel.port1.onmessage = function(event) {
+        messageChannel.port1.onmessage = function (event) {
           emitter.emit(events.MESSAGE, { data: event.data, channel: 'messageChannel', port: 'port1' })
         }
-        messageChannel.port2.onmessage = function(event) {
+        messageChannel.port2.onmessage = function (event) {
           emitter.emit(events.MESSAGE, { data: event.data, channel: 'messageChannel', port: 'port2' })
         }
       }
       emitter.on(events.NOTIFICATION_REQUEST, function (cb) {
-        Notification.requestPermission(function(result) {
+        Notification.requestPermission(function (result) {
           if (typeof result === 'function') cb(result)
         })
       })

@@ -9,16 +9,17 @@ like `bankai`.
 ## Usage
 ```js
 var choo = require('choo')
-var sw = require('choo-service-worker')
-var clear = require('choo-service-worker/clear')
 
 var app = choo()
 if (process.env.NODE_ENV !== 'production') {
-  app.use(clear())
+  app.use(require('choo-service-worker/clear')())
 }
-app.use(sw())
+app.use(require('choo-service-worker')())
 app.mount('body')
 ```
+The above example will install your service worker, and add the events and state 
+properties documented below. For a complete example on how to use them check the 
+[example.js](./example.js) file.
 
 ## Events
 ### `log:error` | `sw.events.ERROR`

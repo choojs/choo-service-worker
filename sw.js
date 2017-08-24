@@ -1,13 +1,14 @@
-self.addEventListener('install', function(event) {
+/* eslint-env serviceworker */
+self.addEventListener('install', function (event) {
   self.skipWaiting()
   sendMessage(event, 'render')
 })
 
-self.addEventListener('activate', function(event) {
+self.addEventListener('activate', function (event) {
   sendMessage(event, 'render')
 })
 
-self.addEventListener('sync', function(event) {
+self.addEventListener('sync', function (event) {
   sendMessage(event, 'render')
   self.registration.showNotification(event.tag)
 })
@@ -19,7 +20,7 @@ self.onmessage = function (e) {
   }
 }
 self.addEventListener('fetch', function (event) {
-  event.respondWith(async function() {
+  event.respondWith(async function () {
     // Respond from the cache if we can
     const cachedResponse = await caches.match(event.request)
     if (cachedResponse) return cachedResponse
@@ -29,7 +30,7 @@ self.addEventListener('fetch', function (event) {
     if (response) return response
 
     // Else try the network.
-    return fetch(event.request)
+    return fetch(event.request) /* global fetch */
   }())
 })
 function sendMessage (e, msg) {
