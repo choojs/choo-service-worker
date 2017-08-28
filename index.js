@@ -8,8 +8,6 @@ var events = serviceWorker.events = {
   INSTALLED: 'sw:installed',
   UPDATED: 'sw:updated',
   REDUNDANT: 'sw:redundant',
-  ENABLE_PRELOAD: 'sw:enablePreload',
-  DISABLE_PRELOAD: 'sw:disablePreload',
   POST_MESSAGE: 'sw:postMessage',
   MESSAGE: 'sw:message',
   SYNC: 'sw:sync',
@@ -91,22 +89,9 @@ function serviceWorker (name, opts) {
                 worker.postMessage(message)
               })
             }).then(function () {
-              state.navigationPreloadSupported = !!registration.navigationPreload
-              registration.navigationPreload.getState().then(function (_state) {
-                state.navigationPreloadState = _state
-              })
-              emitter.on(events.ENABLE_PRELOAD, function () {
+              if (registration.navigationPreload) {
                 registration.navigationPreload.enable()
-                registration.navigationPreload.getState().then(function (_state) {
-                  state.navigationPreloadState = _state
-                })
-              })
-              emitter.on(events.DISABLE_PRELOAD, function () {
-                registration.navigationPreload.disable()
-                registration.navigationPreload.getState().then(function (_state) {
-                  state.navigationPreloadState = _state
-                })
-              })
+              }
             })
             emitter.on(events.SYNC, function (tag) {
               registration.sync.register(tag).then(function () {

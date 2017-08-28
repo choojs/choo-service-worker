@@ -20,8 +20,6 @@ function mainView (state, emit) {
       <h1>Choo service worker example</h1>
       <hr>
       <div>
-        <p>navigationPreloadSupported: <b>${JSON.stringify(state.navigationPreloadSupported)}</b></p>
-        <p>navigationPreloadState: <b>${JSON.stringify(state.navigationPreloadState)}</b></p>
         <p>syncTags: <b>${JSON.stringify(state.syncTags)}</b></p>
       </div>
       <p>To run this example, you must follow the next instructions (some of them will change some of the data above)</p>
@@ -30,7 +28,6 @@ function mainView (state, emit) {
         <li>Post a message <input id="message" type="text"/> <button onclick="${postMessage}">send</button></li>
         <li>Get a message from worker <button onclick="${getMessage}">get message</button> <span id="worker-message"></span></li>
         <li>Activate background syncronization <button onclick="${activateSync}">activate</button></li>
-        <li>Toggle navigation preload <button onclick="${togglePreload}">activate</button></li>
       </ol>
     </body>
   `
@@ -46,15 +43,6 @@ function mainView (state, emit) {
     e.preventDefault()
     emit('render')
     emit(sw.events.SYNC, 'test-tag')
-  }
-  function togglePreload (e) {
-    e.preventDefault()
-    emit('render')
-    if (state.navigationPreloadState.enabled) {
-      emit(sw.events.DISABLE_PRELOAD)
-    } else {
-      emit(sw.events.ENABLE_PRELOAD)
-    }
   }
   function postMessage (e) {
     e.preventDefault()
