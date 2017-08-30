@@ -20,18 +20,15 @@ self.onmessage = function (e) {
   }
 }
 self.addEventListener('fetch', function (event) {
-  event.respondWith(async function () {
-    // Respond from the cache if we can
-    const cachedResponse = await caches.match(event.request)
+  event.respondWith(caches.match(event.request).then(function (cachedResponse) {
     if (cachedResponse) return cachedResponse
-
     // Use the preloaded response, if it's there
-    const response = await event.preloadResponse
+    else return event.preloadResponse
+  }).then(function (response) {
     if (response) return response
-
     // Else try the network.
     return fetch(event.request) /* global fetch */
-  }())
+  }))
 })
 function sendMessage (e, msg) {
   if (e.source && typeof e.source.postMessage === 'function') {
