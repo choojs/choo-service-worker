@@ -17,6 +17,9 @@ if (process.env.NODE_ENV !== 'production') {
 app.use(require('choo-service-worker')())
 app.mount('body')
 ```
+The above example will install your service worker, and add the events and state 
+properties documented below. For a complete example on how to use them check the 
+[example.js](./example.js) file.
 
 ## Events
 ### `log:error` | `sw.events.ERROR`
@@ -31,11 +34,31 @@ Emitted when an already saved worker register or update its content.
 ### `sw:redundant` | `sw.events.REDUNDANT`
 Emitted when an existing worker become redundant.
 
+### `sw:postMessage` | `sw.events.POST_MESSAGE`
+Emit this to post a message to the current service worker. This event is not 
+meant to be handled by choo (or any client).
+
+### `sw:message` | `sw.events.MESSAGE`
+Listen to this event to hadle messages from the worker. This event is not meant 
+to be sent by choo (or any client).
+
+### `sw:sync` | `sw.events.SYNC`
+Emit this to register a sync tag to the service worker. This event is not 
+meant to be handled by choo (or any client).
+
+### `sw:notificationRequest` | `sw.events.NOTIFICATION_REQUEST`
+Emit this to ask for authorization to send notifications. This event is not 
+meant to be handled by choo (or any client).
+
 ## API
 ### `plugin = sw([route], [opts])`
 Register a new service worker if possible. Route defaults to `/sw.js`. If
 provided, `opts` is passed directly to the worker register code. Emits events
 when the worker is registered.
+The plugin also add a few properties to the app state.
+
+- `state.syncTags`: `array` - an array of registered tags for background 
+syncronization.
 
 ### `clear = sw/clear()`
 Clear all service workers.
