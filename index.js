@@ -54,23 +54,20 @@ function serviceWorker (name, opts) {
             registration.onupdatefound = function () {
               var installingWorker = registration.installing
               installingWorker.onstatechange = function () {
-                switch (installingWorker.state) {
-                  case 'installed':
-                    if (navigator.serviceWorker.controller) {
-                      emitter.emit(events.UPDATED, registration)
-                    } else {
-                      emitter.emit(events.INSTALLED, registration)
-                    }
-                    break
-                  case 'redundant':
-                    emitter.emit(events.REDUNDANT, registration)
-                    break
+                if (installingWorker.state === 'installed') {
+                  if (navigator.serviceWorker.controller) {
+                    emitter.emit(events.UPDATED, registration)
+                  } else {
+                    emitter.emit(events.INSTALLED, registration)
+                  }
+                } else if (installingWorker.state === 'redundant') {
+                  emitter.emit(events.REDUNDANT, registration)
                 }
               }
             }
-            return registration.sync.getTags()
-          }).then(function (tags) {
-            state.syncTags = tags
+
+            // Trigger the registration if it exists
+            if (registration.sync) getTags(registration)
           }).catch(function (err) {
             emitter.emit(events.ERROR, err)
           })
@@ -107,5 +104,14 @@ function serviceWorker (name, opts) {
           })
       }
     })
+
+    function getTags (registration) {
+      registration.sync.getTags()
+        .then(function (tags) {
+          state.syncTags = tags
+        }).catch(function (err) {
+          emitter.emit(events.ERROR, err)
+        })
+    }
   }
 }
