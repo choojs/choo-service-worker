@@ -52,10 +52,14 @@ meant to be handled by choo (or any client).
 
 ## API
 ### `plugin = sw([route], [opts])`
-Register a new service worker if possible. Route defaults to `/sw.js`. If
-provided, `opts` is passed directly to the worker register code. Emits events
-when the worker is registered.
-The plugin also add a few properties to the app state.
+Register a new service worker if possible. Route defaults to `/sw.js`. 
+An optional `opts` object can be passed, you can add a `electron` 
+Boolean property to the options object, to enable registration in electron, 
+the rest of the options are passed directly to the registration method of 
+the service worker. Note that, if you enable electron with `opts.electron`, 
+the scope property will be forced to  the root path of your app. Emits 
+events when the worker is registered. The plugin also add a few properties 
+to the app state.
 
 - `state.syncTags`: `array` - an array of registered tags for background 
 syncronization.

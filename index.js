@@ -28,6 +28,18 @@ function serviceWorker (name, opts) {
 
     emitter.on(state.events.DOMCONTENTLOADED, function () {
       opts = mutate({ scope: '/' }, opts)
+      // electron support
+      if (opts.electron) {
+        var path = require('path')
+        var url = require('url')
+        opts.scope = path.join(__dirname, opts.scope)
+        name = url.format({
+          pathname: path.join(__dirname, name.replace(/^\//, '')),
+          protocol: 'file:',
+          slashes: true
+        })
+        delete opts.electron
+      }
       window.onmessage = function (event) {
         emitter.emit(events.MESSAGE, { data: event.data, channel: 'window', port: null })
       }
