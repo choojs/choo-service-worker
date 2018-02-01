@@ -32,7 +32,7 @@ function serviceWorker (name, opts) {
       if (opts.electron) {
         var path = require('path')
         var url = require('url')
-        opts.scope = path.join(__dirname, '/')
+        opts.scope = path.join(__dirname, opts.scope)
         name = url.format({
           pathname: path.join(__dirname, name.replace(/^\//, '')),
           protocol: 'file:',
