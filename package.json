@@ -8,9 +8,7 @@
     "start": "bankai -A 0.0.0.0 -a . example.js",
     "test": "standard && npm run deps"
   },
-  "dependencies": {
-    "xtend": "^4.0.1"
-  },
+  "dependencies": {},
   "devDependencies": {
     "bankai": "^8.1.1",
     "choo": "^6.0.0",
