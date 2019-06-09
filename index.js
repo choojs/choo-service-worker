@@ -1,5 +1,4 @@
 /* global MessageChannel Notification */
-var mutate = require('xtend/mutable')
 var assert = require('assert')
 
 module.exports = serviceWorker
@@ -27,7 +26,7 @@ function serviceWorker (name, opts) {
     assert.equal(typeof emitter, 'object', 'choo-service-worker: emitter should be type object')
 
     emitter.on(state.events.DOMCONTENTLOADED, function () {
-      opts = mutate({ scope: '/' }, opts)
+      opts = Object.assign({ scope: '/' }, opts)
       // electron support
       if (opts.electron) {
         var path = require('path')
